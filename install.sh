@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_FILE="$(basename "${BASH_SOURCE[0]}")"
 
 next_line(){
@@ -97,6 +97,7 @@ others(){
 	systemctl enable bluetooth.service
 	yes | pacman -S sl cmatrix cowsay figlet neofetch
 	printf "2\n\n" | pacman -S virtualbox
+	yes | pacman -S shellcheck
 }
 hotspot(){
 	yes | pacman -S iw hostapd dnsmasq

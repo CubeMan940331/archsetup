@@ -112,7 +112,7 @@ fi
 case "$STATE" in
 	base)
  		timedatectl
-		pacstrap -K /mnt base linux-lts linux-firmware base-devel networkmanager
+		pacstrap -K /mnt base linux-lts linux-lts-headers linux-firmware base-devel networkmanager
 		genfstab -U /mnt >> /mnt/etc/fstab
 
 		cp -p "$SCRIPT_PATH/$SCRIPT_FILE" /mnt/root

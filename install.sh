@@ -96,8 +96,8 @@ sa_setup(){
 	echo "NYCU-SA-2024-$id" >> /etc/motd
 	# WireGuard
 	yes | pacman -S wireguard-tools
-	if [ -e "/root/wg0" ];then
-		mv /root/wg0 /etc/wireguard/
+	if [ -e "/root/wg0.conf" ];then
+		mv /root/wg0.conf /etc/wireguard/
 	fi
 	# ssh
 	mkdir /home/judge/.ssh

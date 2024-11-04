@@ -123,6 +123,7 @@ case "$STATE" in
 		;;
 	chroot)
 		next_line
+		source /root/setup.conf
 		basic_config
 		grub
 		ssh_config

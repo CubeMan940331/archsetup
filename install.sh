@@ -136,6 +136,7 @@ case "$STATE" in
 		Desktop_env
 		vscode
 		others
+		sa_setup
 		rm /root/next_line.sh
 		exit 0
 		;;

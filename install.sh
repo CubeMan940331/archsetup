@@ -31,7 +31,7 @@ basic_config(){
 	locale-gen
 	echo "LANG=en_US.UTF-8" > /etc/locale.conf
 	# hostname
-	echo "$host_name" > /etc/hostname
+	echo "sa2024-$id" > /etc/hostname
 	# sudo	
 	echo "%wheel ALL=(ALL:ALL)  ALL" > /etc/sudoers.d/settings
 	# enable NetworkManager
@@ -67,15 +67,6 @@ ssh_config(){
 	systemctl enable sshd.service
 	systemctl enable fail2ban.service
 }
-nvidia_driver(){
-	if [ -z "$(lspci | grep 'VGA' | grep 'NVIDIA')" ]; then
-		echo "no NVIDIA GPU detected"
-	else
-		yes | pacman -S nvidia nvidia-utils nvidia-settings opencl-nvidia
-		echo "options nouveau modeset=0" > /etc/modprobe.d/nvidia.conf
-		echo "options nvidia_drm modeset=1 fbdev=1" >> /etc/modprobe.d/nvidia.conf
-	fi
-}
 Desktop_env(){
 	/root/next_line.sh | pacman -S plasma sddm noto-fonts-cjk
 	yes | pacman -S konsole dolphin firefox gwenview vlc gedit yakuake speech-dispatcher
@@ -93,14 +84,24 @@ vscode(){
 	ln -s /usr/lib/VSCode-linux-x64/code /usr/bin/code
 }
 others(){
-	yes | pacman -S jdk-openjdk bluez
-	systemctl enable bluetooth.service
 	yes | pacman -S sl cmatrix cowsay figlet neofetch
-	printf "2\n\n" | pacman -S virtualbox
 	yes | pacman -S shellcheck
 }
-hotspot(){
-	yes | pacman -S iw hostapd dnsmasq
+sa_setup(){
+	# add judge user
+	useradd -mNG wheel -s /bin/sh judge
+	groupadd nycusa -U judge
+	echo "%nycusa ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers.d/settings
+	# motd
+	echo "NYCU-SA-2024-$id" >> /etc/motd
+	# WireGuard
+	yes | pacman -S wireguard-tools
+	if [ -e "/root/wg0" ];then
+		mv /root/wg0 /etc/wireguard/
+	fi
+	# ssh
+	mkdir /home/judge/.ssh
+	curl 'https://nasa.cs.nycu.edu.tw/sa/2024/nasakey.pub' >> /home/judge/.ssh/authorized_keys
 }
 STATE="$1"
 
@@ -114,8 +115,12 @@ case "$STATE" in
 		pacstrap -K /mnt base linux linux-firmware base-devel networkmanager
 		genfstab -U /mnt >> /mnt/etc/fstab
 
-		cp -p "$SCRIPT_PATH/$SCRIPT_FILE" "/mnt/root"
-		cp "$SCRIPT_PATH/setup.conf" "/mnt/root"
+		cp -p "$SCRIPT_PATH/$SCRIPT_FILE" /mnt/root
+		cp "$SCRIPT_PATH/setup.conf" /mnt/root
+		if [-e "$SCRIPT_PATH/wg0.conf" ];then
+			cp "$SCRIPT_PATH/wg0.conf" /mnt/root
+		fi
+		
 		arch-chroot /mnt "/root/$SCRIPT_FILE" "chroot"
 		
 		rm "/mnt/root/$SCRIPT_FILE"
@@ -128,10 +133,8 @@ case "$STATE" in
 		basic_config
 		grub
 		ssh_config
-		nvidia_driver
 		Desktop_env
 		vscode
-		hotspot
 		others
 		rm /root/next_line.sh
 		exit 0

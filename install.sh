@@ -117,7 +117,7 @@ case "$STATE" in
 
 		cp -p "$SCRIPT_PATH/$SCRIPT_FILE" /mnt/root
 		cp "$SCRIPT_PATH/setup.conf" /mnt/root
-		if [-e "$SCRIPT_PATH/wg0.conf" ];then
+		if [ -e "$SCRIPT_PATH/wg0.conf" ];then
 			cp "$SCRIPT_PATH/wg0.conf" /mnt/root
 		fi
 		

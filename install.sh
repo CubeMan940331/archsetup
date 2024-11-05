@@ -54,18 +54,7 @@ ssh_config(){
 	echo "HostKey /etc/ssh/ssh_host_rsa_key" > /etc/ssh/sshd_config.d/settings.conf
 	echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config.d/settings.conf
 		
-	yes | pacman -S fail2ban
-	echo "[sshd]" >> /etc/fail2ban/jail.d/sshd.local
-	echo "enabled = true" >> /etc/fail2ban/jail.d/sshd.local
-	echo "filter = sshd" >> /etc/fail2ban/jail.d/sshd.local
-	echo "banaction = iptables" >> /etc/fail2ban/jail.d/sshd.local
-	echo "backend = systemd" >> /etc/fail2ban/jail.d/sshd.local
-	echo "maxretry = 5" >> /etc/fail2ban/jail.d/sshd.local
-	echo "findtime = 1d" >> /etc/fail2ban/jail.d/sshd.local
-	echo "bantime = 30" >> /etc/fail2ban/jail.d/sshd.local
-
 	systemctl enable sshd.service
-	systemctl enable fail2ban.service
 }
 Desktop_env(){
 	/root/next_line.sh | pacman -S plasma sddm noto-fonts-cjk

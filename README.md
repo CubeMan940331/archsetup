@@ -4,6 +4,8 @@
 **basic**
 - host name
 - mirror
+- enable ParallelDownloads (todo)
+- enable multi (todo)
 - timezone
 - locale
 - sudo
@@ -20,6 +22,7 @@
 **ssh**
 - install `openssh`, `fail2ban`
 - fail2ban
+- add my public key (todo)
 
 **nvidia driver**
 - install `nvidia-utils`, `nvidia-setting`, `opencl-nvidia`

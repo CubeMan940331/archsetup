@@ -55,7 +55,6 @@ basic_config(){
 	# add user
 	useradd -mG wheel "$user_name"
 	echo "$user_name:$encrypted_user_passwd" | chpasswd -e
-	sleep 5
 }
 grub(){
 	yes | pacman -S grub os-prober efibootmgr

@@ -4,8 +4,8 @@
 **basic**
 - host name
 - mirror
-- enable ParallelDownloads (todo)
-- enable multi (todo)
+- enable ParallelDownloads
+- enable multilib
 - timezone
 - locale
 - sudo

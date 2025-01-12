@@ -3,6 +3,13 @@
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_FILE="$(basename "${BASH_SOURCE[0]}")"
 
+user_name="cubeman"
+# $ openssl passwd -6
+encrypted_user_passwd='$6$NYdoX5w2VEXwm513$es..D5KH3KxRuLOPNBYKZ4h134gh6PWUydTQb8vNMQbX1lXzZjYyfrqbO5DVtQ0dCaCdS9I4jMjI66hIcqEwQ.'
+encrypted_root_passwd='$6$g8H6iVT5hfkgJsYs$ScbjzJQkcHXcmDMerQzq5lO2/jPu.C1VLVewY/FnjmQ92Ul4LFYCxXW8YtGhQQ946MbgdJS8zaCU.8IN3MAGT/'
+
+host_name="CubicSilicon"
+
 next_line(){
 	echo "while [ true ]; do" > /root/next_line.sh
 	echo 'printf "\\n"' >> /root/next_line.sh
@@ -14,6 +21,13 @@ basic_config(){
 	sed -e 10a\ 'Server = https://archlinux.cs.nycu.edu.tw/$repo/os/$arch' /etc/pacman.d/mirrorlist > /tmp/mirrorlist
 	cat /tmp/mirrorlist > /etc/pacman.d/mirrorlist
 	rm /tmp/mirrorlist
+	# enable ParallelDownloads
+	sed -e 's/^#ParallelDownloads.*/ParallelDownloads = 5/' < /etc/pacman.conf > /tmp/pacman.conf
+	cat /tmp/pacman.conf > /etc/pacman.conf
+	# enable multilib
+	sed -i '/^#\[multilib\]/ s/^#//' /etc/pacman.conf
+	sed -i '/^\[multilib\]/,/^$/ {/^#Include.*/ s/^#//}' /etc/pacman.conf
+	pacman -Sy
 	# other enssential packages
 	yes | pacman -S  vim man-db net-tools git wget tmux ntfs-3g iperf3 intel-ucode p7zip
 	# timeZone
@@ -39,8 +53,9 @@ basic_config(){
 	# root passwd
 	echo "root:$encrypted_root_passwd" | chpasswd -e
 	# add user
-	useradd -mNG wheel "$user_name"
+	useradd -mG wheel "$user_name"
 	echo "$user_name:$encrypted_user_passwd" | chpasswd -e
+	sleep 5
 }
 grub(){
 	yes | pacman -S grub os-prober efibootmgr
@@ -115,16 +130,13 @@ case "$STATE" in
 		genfstab -U /mnt >> /mnt/etc/fstab
 
 		cp -p "$SCRIPT_PATH/$SCRIPT_FILE" "/mnt/root"
-		cp "$SCRIPT_PATH/setup.conf" "/mnt/root"
 		arch-chroot /mnt "/root/$SCRIPT_FILE" "chroot"
 		
 		rm "/mnt/root/$SCRIPT_FILE"
-		rm "/mnt/root/setup.conf"
 		exit 0
 		;;
 	chroot)
 		next_line
-		source /root/setup.conf
 		basic_config
 		grub
 		ssh_config

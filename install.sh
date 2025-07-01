@@ -106,7 +106,7 @@ vscode(){
 others(){
 	yes | pacman -S jdk-openjdk bluez
 	systemctl enable bluetooth.service
-	yes | pacman -S sl cmatrix cowsay figlet neofetch
+	yes | pacman -S sl cmatrix cowsay figlet fastfetch
 	printf "2\n\n" | pacman -S virtualbox
 	yes | pacman -S shellcheck
 }

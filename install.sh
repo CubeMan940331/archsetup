@@ -21,9 +21,6 @@ basic_config(){
 	sed -e 10a\ 'Server = https://archlinux.cs.nycu.edu.tw/$repo/os/$arch' /etc/pacman.d/mirrorlist > /tmp/mirrorlist
 	cat /tmp/mirrorlist > /etc/pacman.d/mirrorlist
 	rm /tmp/mirrorlist
-	# enable ParallelDownloads
-	sed -e 's/^#ParallelDownloads.*/ParallelDownloads = 5/' < /etc/pacman.conf > /tmp/pacman.conf
-	cat /tmp/pacman.conf > /etc/pacman.conf
 	# enable multilib
 	sed -i '/^#\[multilib\]/ s/^#//' /etc/pacman.conf
 	sed -i '/^\[multilib\]/,/^$/ {/^#Include.*/ s/^#//}' /etc/pacman.conf

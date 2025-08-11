@@ -1,40 +1,44 @@
 # archsetup
 
-## Features
-**basic**
-- host name
-- mirror
-- enable ParallelDownloads
-- enable multilib
-- timezone
-- locale
-- sudo
-- root password
-- add user
-- user password
+## Procedure
+**manual**
+- partition the disk
+- format the disk
+- mount the disk
+- inspect or modify the script
+- run it
 
-**boot loader**
-- install `grub`, `os-prober`, `efibootmgr`
-- using grub
-- use removable option
-- enable os-prober to find other OS
+**install media**
+- sync time
+- setting_mirror
+- install package to new root
+- genfstab
+- copy script to new root
 
-**ssh**
-- install `openssh`, `fail2ban`
-- fail2ban
-- add my public key (todo)
-
-**nvidia driver**
-- install `nvidia-utils`, `nvidia-setting`, `opencl-nvidia`
-- nouveau modeset=0
-- nvidia_drm modeset=1 fbdev=1
-
-**Desktop Env**
-- install `plasma`, `sddm`, `noto-fonts-cjk` using default options
-- install `konsole`, `dolphin`, `firefox`, `gedit`
-- install `fcitx5`, `fcitx5-chewing`, `fcitx5-breeze`, `fcitx5-configtool` using default options
-
-**vscode**
-- install the latest version
-
-
+**after chroot**
+- basic config
+    - timezone
+    - locale
+    - hostname
+    - root passwd
+    - add user
+    - sudo
+- system-tweaks
+    - enable multilib
+    - enable NetworkManager
+    - enable paccache.timer
+    - enable systemd-timesyncd
+    - limit journal size
+- boot loader
+    - grub
+- ssh (with fail2ban)
+- nvidia driver (TODO)
+- Desktop env (with fcitx5-chewing)
+    - install kdm-plasma and gui-apps
+    - config and enable sddm
+    - install fcitx5-chewing
+    - config input method (TODO)
+- vscode
+    - gen update-vscode script
+    - install vscode
+- others

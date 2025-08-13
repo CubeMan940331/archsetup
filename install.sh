@@ -37,7 +37,7 @@ SCRIPT_FILE="$(basename "${BASH_SOURCE[0]}")"
 
 setting_mirror(){
 	# setting mirror
-	reflector --contry TW, --latest 8 --sort rate -p https --save /etc/pacman.d/mirrorlist
+	reflector --country TW, --latest 8 --sort rate -p https --save /etc/pacman.d/mirrorlist
 	num="10"
 	for item in $mirror_list; do
 		sed -e "$num"a\ "Server = $item" /etc/pacman.d/mirrorlist > /tmp/mirrorlist

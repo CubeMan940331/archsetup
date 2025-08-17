@@ -37,6 +37,7 @@ SCRIPT_FILE="$(basename "${BASH_SOURCE[0]}")"
 
 setting_mirror(){
 	# setting mirror
+	echo "" > /etc/pacman.d/mirrorlist
 	reflector --country TW, --latest 8 --sort rate -p https --save /etc/pacman.d/mirrorlist
 	num="10"
 	for item in $mirror_list; do
@@ -83,14 +84,15 @@ system_tweaks(){
 	pacman -Sy
 
 	# enable services
+	pacman -S --noconfirm pacman-contrib
 	systemctl enable NetworkManager
 	systemctl enable paccache.timer # clean pacman cache
 	systemctl enable systemd-timesyncd # for time sync
 
 	# limit journal size
 	mkdir /etc/systemd/journald.conf.d
-	echo "[Journal]" > /etc/systemd/journald.conf.d
-	echo "SystemMaxUse=500M"
+	echo "[Journal]" > /etc/systemd/journald.conf.d/settings.conf
+	echo "SystemMaxUse=500M" >> /etc/systemd/journald.conf.d/settings.conf
 }
 grub(){
 	pacman -S --noconfirm grub os-prober efibootmgr

@@ -88,8 +88,9 @@ system_tweaks(){
 	# enable services
 	pacman -S --noconfirm pacman-contrib
 	systemctl enable NetworkManager
-	systemctl enable paccache.timer # clean pacman cache
-	systemctl enable systemd-timesyncd # for time sync
+	systemctl enable paccache.timer # https://wiki.archlinux.org/title/Pacman#Cleaning_the_package_cache
+	systemctl enable systemd-timesyncd # https://wiki.archlinux.org/title/Systemd-timesyncd#Usage
+	systemctl enable fstrim.timer # https://wiki.archlinux.org/title/Solid_state_drive#TRIM
 
 	# limit journal size
 	mkdir /etc/systemd/journald.conf.d

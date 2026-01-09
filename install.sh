@@ -13,6 +13,7 @@ mirror_list='
 
 # non-gui packages to install without configuring
 simple_package_list='
+	htop
 	bash-completion
 	amd-ucode
 	cmatrix

@@ -152,11 +152,11 @@ vscode(){
 
 	echo '#!/bin/bash' > /usr/bin/update-vscode
 	echo "wget -P /tmp/ \$(curl '$url' | sed 's/http/\nhttp/g' | grep http)" >> /usr/bin/update-vscode
-	echo 'tar -zxf /tmp/code-stable*.tar.gz -C /usr/lib' >> /usr/bin/update-vscode
+	echo 'tar -zxf /tmp/code-stable*.tar.gz -C /usr/share' >> /usr/bin/update-vscode
 	chmod 755 /usr/bin/update-vscode
 	
 	/usr/bin/update-vscode
-	ln -s /usr/lib/VSCode-linux-x64/code /usr/bin/code
+	ln -s /usr/share/VSCode-linux-x64/code /usr/bin/code
 }
 others(){
 	pacman -S --noconfirm $simple_package_list

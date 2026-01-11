@@ -2,14 +2,16 @@
 
 user_name="cubeman"
 # $ openssl passwd -6
-encrypted_user_passwd='$6$NYdoX5w2VEXwm513$es..D5KH3KxRuLOPNBYKZ4h134gh6PWUydTQb8vNMQbX1lXzZjYyfrqbO5DVtQ0dCaCdS9I4jMjI66hIcqEwQ.'
-encrypted_root_passwd='$6$g8H6iVT5hfkgJsYs$ScbjzJQkcHXcmDMerQzq5lO2/jPu.C1VLVewY/FnjmQ92Ul4LFYCxXW8YtGhQQ946MbgdJS8zaCU.8IN3MAGT/'
+user_passwd='passwd'
+root_passwd='root'
 
 host_name="CubicSilicon"
 
 mirror_list='
 	https://archlinux.cs.nycu.edu.tw/$repo/os/$arch
 '
+
+mirror_locations="TW,"
 
 # non-gui packages to install without configuring
 simple_package_list='
@@ -40,7 +42,7 @@ SCRIPT_FILE="$(basename "${BASH_SOURCE[0]}")"
 setting_mirror(){
 	# setting mirror
 	if [ ! -e reflector-result.txt ]; then
-		reflector --country TW, --latest 8 --sort rate -p https --save reflector-result.txt
+		reflector --country $mirror_locations --latest 8 --sort rate -p https --save reflector-result.txt
 	fi
 	echo "# manual mirrorlist" > mirrorlist_new.txt
 	for item in $mirror_list; do
@@ -76,11 +78,11 @@ basic_config(){
 	echo "$host_name" > /etc/hostname
 	
 	# root passwd
-	echo "root:$encrypted_root_passwd" | chpasswd -e
+	echo $root_passwd | passwd -s root
 	
 	# add user
 	useradd -mG wheel "$user_name"
-	echo "$user_name:$encrypted_user_passwd" | chpasswd -e
+	echo $user_passwd | passwd -s $user_name
 
 	# sudo
 	echo "%wheel ALL=(ALL:ALL)  ALL" > /etc/sudoers.d/settings

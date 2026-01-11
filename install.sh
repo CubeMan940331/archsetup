@@ -39,15 +39,21 @@ SCRIPT_FILE="$(basename "${BASH_SOURCE[0]}")"
 
 setting_mirror(){
 	# setting mirror
-	echo "" > /etc/pacman.d/mirrorlist
-	reflector --country TW, --latest 8 --sort rate -p https --save /etc/pacman.d/mirrorlist
-	num="10"
+	if [ ! -e reflector-result.txt ]; then
+		reflector --country TW, --latest 8 --sort rate -p https --save reflector-result.txt
+	fi
+	echo "# manual mirrorlist" > mirrorlist_new.txt
 	for item in $mirror_list; do
-		sed -e "$num"a\ "Server = $item" /etc/pacman.d/mirrorlist > /tmp/mirrorlist
-		cat /tmp/mirrorlist > /etc/pacman.d/mirrorlist
-		rm /tmp/mirrorlist
-		num=$(($num+1))
+		echo "Server =  $item" >> mirrorlist_new.txt
 	done
+	echo "" >> mirrorlist_new.txt
+
+	cat reflector-result.txt >> mirrorlist_new.txt
+	
+	if [ ! -e mirrorlist_bak.txt ]; then
+		cp /etc/pacman.d/mirrorlist mirrorlist_bak.txt
+	fi
+	cp mirrorlist_new.txt /etc/pacman.d/mirrorlist
 }
 basic_config(){
 	# TimeZone

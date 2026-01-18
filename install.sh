@@ -39,28 +39,29 @@ function setting_mirror(){
 }
 
 function edit_basic_conf(){
+    # only edit if the value empty
     if [[ -n "${host_name}" ]]; then
-        sed -i s/^host_name=.\*/host_name="${host_name}"/ \
+        sed -i s/^host_name=\$/host_name="${host_name}"/ \
             config-scripts/000-basic/files/basic.conf
     fi
     if [[ -n "${user_name}" ]]; then
-        sed -i s/^user_name=.\*/user_name="${user_name}"/ \
+        sed -i s/^user_name=\$/user_name="${user_name}"/ \
             config-scripts/000-basic/files/basic.conf
     fi
     if [[ -n "${root_passwd}" ]]; then
-        sed -i s/^root_passwd=.\*/root_passwd="${root_passwd}"/ \
+        sed -i s/^root_passwd=\$/root_passwd="${root_passwd}"/ \
             config-scripts/000-basic/files/basic.conf
     fi
     if [[ -n "${user_passwd}" ]]; then
-        sed -i s/^user_passwd=.\*/user_passwd="${user_passwd}"/ \
+        sed -i s/^user_passwd=\$/user_passwd="${user_passwd}"/ \
             config-scripts/000-basic/files/basic.conf
     fi
     if [[ -n "${time_zone}" ]]; then
-        sed -i "s|^time_zone=.*|time_zone=${time_zone}|" \
+        sed -i "s|^time_zone=\$|time_zone=${time_zone}|" \
             config-scripts/000-basic/files/basic.conf
     fi
     if [[ -n "${default_locale}" ]]; then
-        sed -i "s/^default_locale=.*/default_locale=${default_locale}/" \
+        sed -i "s/^default_locale=\$/default_locale=${default_locale}/" \
             config-scripts/000-basic/files/basic.conf
     fi
     if [[ ${#locale_list[@]} -ne 0 ]]; then
@@ -69,30 +70,28 @@ function edit_basic_conf(){
             locale_list_str="${locale_list_str}'${target}' "
         done
         locale_list_str="${locale_list_str})"
-        sed -i "s|^locale_list=.*|locale_list=${locale_list_str}|" \
+        sed -i "s|^locale_list=\([ ]*\)\$|locale_list=${locale_list_str}|" \
             config-scripts/000-basic/files/basic.conf
     fi
 }
 
 function extract(){
     echo "extract scripts"
-    (echo "${archive}" | base64 -d | tar -xz) || \
+    (echo "${archive}" | base64 -d | tar -xz --skip-old-files) || \
     (echo "failed to extract scripts"; exit 1)
     
     edit_basic_conf
-    # TODO: scan and copy private config-scripts
 }
 
 function install_base(){
     echo "install base packages"
-    if [[ -e "/mnt/root/finished.txt" ]]; then
-        return
+    if [[ ! -e "/mnt/root/finished.txt" ]]; then
+        setting_mirror
+        timedatectl &&
+        pacstrap -K /mnt base linux &&
+        genfstab -U /mnt > /mnt/etc/fstab &&
+        echo "install at $(date)" > /mnt/root/finished.txt
     fi
-    setting_mirror
-    timedatectl &&
-    pacstrap -K /mnt base linux &&
-    genfstab -U /mnt > /mnt/etc/fstab &&
-    echo "install at $(date)" > /mnt/root/finished.txt
 
     echo "copy config-scripts/ to /mnt/root/"
     cp -r "${SCRIPT_PATH}/config-scripts" /mnt/root ||
@@ -123,5 +122,5 @@ function main(){
         arch-chroot /mnt "/root/config-scripts/config-all.sh"
     fi
 }
-archive='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'
+archive='H4sIAAAAAAAAA+1cbXPbuBH2Z/wKRHHtODMQSVmU2rsqV8dxc2l9SSZOOp26Pg9FghIjkmAJUJKTy3/vLijJeomii6MwORvPjC3iHeQCD3YXIH2RhlGPST+PMiWtna8BG9B2Xfx12q49/zvFjuM6h4cNx7Xd1o7tHLac9g51v0pvllBI5eWU7vhFlydeujbfpvQ/KPxF+Tu2zaTsb3ccfL78m22nYeRfBdbIPxv06mqsttMGCrjVbK6Xf8NZkn+r0XB3qL2d5j+NOy5/kfEUBE5CL4obXS8l37pDBpVizfz3fBWJtC7722hjE/+77jL/t9xGy8z/KnD/ntWNUqvrAQecHb969vL15cuj1z93arsP/IDC/yDKUy/hcPn+8dHZz5dnL968Oj45ty8+1A5qdG+PZqPgoEZ05vdzNXyo0d9+o3wcKeoQ8vzol5PO7gNohk9rW8pLJQ8o43RfWr+e2+wvFw+ZZfX2Dwj3+4LWUEoKquN+oaK0R3ffY5UfaDlwa4Tcn1zSzscBGXyRXdEwijnxM/0rLRjrQT0WvhdTiyvfmtKg9RYu6oEFN4hVQ6e7MYcu5sPI50ReScUTX8WzBKgGs64kfPe0umb+l09nS218vv7XAhXQ6H9V4JPyv54dX9TGJv3PaR0uyb/dbjuG/6vAOcr4gpR0FdAOVXnBCYhf8RxCmEqAv0p9ACJglGBOCZH+gKdYoiS9gCTeOOcqv4IoF2pIAxUB03eo08caJgG3/91S4Z3E0vyHych6edHdqgPg8/kffgz/V4J18t+mA2Cj/X/YWF7/Dw3/VwMUNhGSZbno8pzwMOoKoZJebmj6TmDd/N+mA2AD/zt2a0X/b7WM/68S3B37H4c1i1KoKI7pfwkFMAa19rjqjP/cumw1GbDfLAWuGdw795XIrzoWsuIsDQOx8AKesyjoYMVo/H/dBqZJOU/EUPsW0DWRDKAKyrLSexHw0CtiZWGBunZIzBwdE4qv+2FvXV7d/2RQMgJlguo+6QxlLihrVoVbhnX8v00H0A38Pw78GP2/Anxa/nOs8QVtbNb/3UX5N+yGY/z/leDpqzePL588Ozt6fHpy+eLs8uWrF49PXnVCL5bckP3tx9L8nwRBg9nS3h9io/7fXOX/VtPM/yqwLf1/Uvbvz05PsOy8or9aDK2F3bnWyETJnyrP2aAnayTzfHjglJ2B1psKPTLzBK85D8BWgA56itath1NfFdgQvZxnlA3p/q/3wXIIRU4jxRMapZjvRxoIrURj3CX2btEiwehPGSK6aEjP6T1MLvNf28k1evEjVX2e6nwI6DGYKgXXEWE0LX+PPphlWa2k8WjPgT4oPmshFvruarrQwVIbE+OotHzgNndn96a3HnlQW8rq97k/oB+pWWcprbVJfwORmiXgtmOJ/13bZkPpi4BvcQfgBv7/pm38/5Vgvfy35wHcJP/miv+v3WjYZv2vAnfH/zdzhRVZ4Ck+GebUKmSOjwA9YNPrpSyPqBXwoZUWcXzr1sP18397HqAb+H9c2/h/KsEm+S/MhBu2sZH/ndaS/8dp2Ib/K8E8/88zrRJgLY1S3ISg/zo7Rhr0cr8fDTlwfZHHYIeJQmWFwj0MaqkE7C70FYIFJiXrwiNlL/5xSvf7SmXyB8vC4VMfRrLwYqmKIBJ1XySW7HvWtJmfukUUBx2pzxftCdmJwXgas3GruU9QROzdONQN6bpYme9hHZLqvXeUHZdMDjXmemskBstRzsVZ5V2wWa3WAv3r0K1j981Y9v86NoMFNt7qm2A30P8bkN3wfwVYK/8tHgDa5P93W62V/X/b+P8rwX0Kqi2Pge9FjIc6JWc6gvQihUq11gL0Ac9JlkDIUJaXfBx6CjlfklSFkh32sITiY1DUg0iJnAyjBKPQjeelAY3SUNDM63ECMSzo6h8MSwKlMFXr8X0ex/TNv7E3fQbLRBZzNEWJSooxZki5Gol8QPVAJRBiZX9wXSKjHlckyngeHhLlZ0GRZESf/U8yXJrwFGtZ7l2kEyY3B6NAFXKS1FciI90Emkz9oCChJ1XIld/X9xJJn+BSON3qn84d0vWJn3gqj8bEFyPpXRGYWdB1ImN8MaDLU6hh1BeR/I7WmZX9PxsWbxn535j/Id3wfxVYK/8K+R+FvfL+V8PwfxW4T7W4gZX9gSZiXAKIVpKJLAJNyMcv3wDt+bnQOrKXBKzQV1GqeDy51ktFnoxA0y5Ls1nwmrHJ5BeeI7Rljph+B1g7/7d4AHTT/m+z3Vz2/9r4/Qcz/78+7o7/V4oi96Hl0q+lB3kdR78u+zpK+H9wv1O7DcJ5v8E7iEbV1II+40tMlxgBPdanKPXLcRhL+iMfAgPKGGqUou9jtTqZL2xEQy1l7GUcSXX+N3iOs43puUdwfx8yYpkPtX1r4XpyEhTx17lO8HqPp3Npj0pfyVza3p5OTIYrKUu1lDu/ZZhheCKD06PnTzu77ycnRy/LDPAkHi1UgM8U770vpEJZTwrvvscIvTV9XWSWB/LneAA286QcBbMiGHdZxukxUl6iYwdTsJQXBLSQsJbgPwyw5Ckd9TmYNFAeIydNzurUcR+tc6nA6tu8z8vl65dbtHyt5f8tHgC9gf+/0Tbf/6kEG+R/TZNf0MYm/b9x/f2XtuM0y/OfZv2vBHNL32xx68wtXXNrVefBAVnk/s4Cz8/4XUcjk+roGaXq6AnBzxF7h8wxcudWkOofCBvmP5qATHKFOpe8aRub5v/K+58Nxzbff6oGfyp1paPT084D+PcD/B1QDJqJeCewNP8bMP//+eTkm3//zwWVwOh/FWCN/Cv9/t/h6v6f7ZrzH5UANLKcD3kKpncuEhgCePIDLGWJThY8h0+yKOOjKOfsrecPyP9UiyWFdnkEkcfCMMl4j6RCCRaKVMm5S+a/HRCSxZ5MPCKDQG8FPn3zjHpZJslApFKAghmIOOtHKQmhiVCMicw4WOosiGTmKb8PZnZvxNNhxEdkGPukhzuL2tvsR2rskoUfBvlH0PFpsJtz/o7PEvVQx61Cs7bNsGb+V/r9v1Zj9fsfh0b/qwR3x/+Lr+5M393RzkekJO3aqAdWjV7Mv76z+Fr9fEbgKfLxTwlC4aT0fq6W+r2fEUSSrFb+a+b/N/7+n9tqHBr9rwp8Uv7XQ/qL2tho/7vL+/9tt23e/6wE569RxhfkCehbsXd1BtTE887Iu4q9NCDHRZ6DbtiZKFLfurMGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBr8L/wfHF8N4AHgAAA=='
 main "$@"

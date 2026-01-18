@@ -1,0 +1,46 @@
+# devel tools
+base-devel
+git
+
+# filesystem tools
+dosfstools
+exfatprogs
+ntfs-3g
+
+# text editor
+vim
+
+# man and info page
+man-db
+man-pages
+texinfo
+
+# shell UX
+bash-completion
+tmux
+
+# network utils
+net-tools
+curl
+wget
+iperf3
+tcpdump
+
+# compression utils
+zip
+
+# system status utils
+htop
+bmon
+ncdu
+fastfetch
+
+# misc
+arch-install-scripts
+bc
+cmatrix
+cowsay
+figlet
+sl
+sysbench
+whois

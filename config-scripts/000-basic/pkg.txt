@@ -1,0 +1,14 @@
+# basic packages
+base
+linux
+sudo
+
+# CPU microcode
+amd-ucode
+intel-ucode
+
+# firmware
+linux-firmware
+
+# network
+networkmanager

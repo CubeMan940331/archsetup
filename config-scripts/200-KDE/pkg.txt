@@ -1,0 +1,23 @@
+# prevent prompts to chosing pkgs
+pipewire-jack
+qt6-multimedia-ffmpeg
+noto-fonts
+noto-fonts-cjk
+
+plasma
+sddm
+
+# GUI apps
+konsole
+dolphin
+firefox
+speech-dispatcher
+gwenview
+vlc
+gedit
+
+# fcitx5
+fcitx5
+fcitx5-chewing
+fcitx5-breeze
+fcitx5-configtool

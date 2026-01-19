@@ -34,3 +34,6 @@ useradd -mG wheel "${user_name}"
 echo "${user_passwd}" | passwd -s "${user_name}"
 
 systemctl enable NetworkManager
+
+mkdir -p /etc/sudoers.d/ &&
+cp files/sudo-settings /etc/sudoers.d/

@@ -1,0 +1,6 @@
+000-basic
+001-grub
+010-utils
+100-ssh
+200-KDE
+500-vscode

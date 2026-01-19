@@ -18,6 +18,7 @@ texinfo
 # shell UX
 bash-completion
 tmux
+exa
 
 # network utils
 net-tools

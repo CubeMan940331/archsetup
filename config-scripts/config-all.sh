@@ -5,7 +5,7 @@ cd $SCRIPT_PATH
 
 echo "install pkgs"
 pacman -S --noconfirm --needed $(cat ./*/pkg.txt | grep -v '^#')
-for item in ./*; do
+while read -r item; do
     item_name=$(basename "$item" | sed -e 's/^[0-9]*-//g')
     if [ ! -e "$item/action.sh" ]; then
         continue
@@ -17,4 +17,4 @@ for item in ./*; do
         echo "check $item/log.txt"
         exit 1
     fi
-done
+done < "list.txt"

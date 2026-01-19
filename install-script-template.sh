@@ -40,39 +40,32 @@ function setting_mirror(){
 
 function edit_basic_conf(){
     # only edit if the value empty
-    if [[ -n "${host_name}" ]]; then
-        sed -i s/^host_name=\$/host_name="${host_name}"/ \
-            config-scripts/000-basic/files/basic.conf
-    fi
-    if [[ -n "${user_name}" ]]; then
-        sed -i s/^user_name=\$/user_name="${user_name}"/ \
-            config-scripts/000-basic/files/basic.conf
-    fi
-    if [[ -n "${root_passwd}" ]]; then
-        sed -i s/^root_passwd=\$/root_passwd="${root_passwd}"/ \
-            config-scripts/000-basic/files/basic.conf
-    fi
-    if [[ -n "${user_passwd}" ]]; then
-        sed -i s/^user_passwd=\$/user_passwd="${user_passwd}"/ \
-            config-scripts/000-basic/files/basic.conf
-    fi
-    if [[ -n "${time_zone}" ]]; then
-        sed -i "s|^time_zone=\$|time_zone=${time_zone}|" \
-            config-scripts/000-basic/files/basic.conf
-    fi
-    if [[ -n "${default_locale}" ]]; then
-        sed -i "s/^default_locale=\$/default_locale=${default_locale}/" \
-            config-scripts/000-basic/files/basic.conf
-    fi
-    if [[ ${#locale_list[@]} -ne 0 ]]; then
-        locale_list_str="("
-        for target in "${locale_list[@]}"; do
-            locale_list_str="${locale_list_str}'${target}' "
-        done
-        locale_list_str="${locale_list_str})"
-        sed -i "s|^locale_list=\([ ]*\)\$|locale_list=${locale_list_str}|" \
-            config-scripts/000-basic/files/basic.conf
-    fi
+    sed -i s/^host_name="[ ]*"\$/host_name="${host_name}"/ \
+        config-scripts/000-basic/files/basic.conf
+
+    sed -i s/^user_name="[ ]*"\$/user_name="${user_name}"/ \
+        config-scripts/000-basic/files/basic.conf
+
+    sed -i s/^root_passwd="[ ]*"\$/root_passwd="${root_passwd}"/ \
+        config-scripts/000-basic/files/basic.conf
+    
+    sed -i s/^user_passwd="[ ]*"\$/user_passwd="${user_passwd}"/ \
+        config-scripts/000-basic/files/basic.conf
+
+    sed -i "s|^time_zone=[ ]*\$|time_zone=${time_zone}|" \
+        config-scripts/000-basic/files/basic.conf
+
+    sed -i "s/^default_locale=[ ]*\$/default_locale=${default_locale}/" \
+        config-scripts/000-basic/files/basic.conf
+
+    locale_list_str="("
+    for target in "${locale_list[@]}"; do
+        locale_list_str="${locale_list_str}'${target}' "
+    done
+    locale_list_str="${locale_list_str})"
+    sed -i "s|^locale_list=[ ]*([ ]*)[ ]*\$|locale_list=${locale_list_str}|" \
+        config-scripts/000-basic/files/basic.conf
+
 }
 
 function extract(){
@@ -84,9 +77,9 @@ function extract(){
 }
 
 function install_base(){
-    echo "install base packages"
     if [[ ! -e "/mnt/root/finished.txt" ]]; then
         setting_mirror
+        echo "install base packages"
         timedatectl &&
         pacstrap -K /mnt base linux &&
         genfstab -U /mnt > /mnt/etc/fstab &&

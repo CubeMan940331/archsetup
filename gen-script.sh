@@ -1,5 +1,4 @@
 #!/bin/bash
-
 for item in config-scripts/*/action.sh; do
     chmod +x "$item"
 done

@@ -3,7 +3,7 @@ SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${SCRIPT_PATH}" || exit 1
 
 echo "install pkgs"
-pacman -S --noconfirm --needed "$(cat ./*/pkg.txt | grep -v '^#')"
+pacman -S --noconfirm --needed "$(cat ./*/pkg.txt | grep -v '^#'  | tr '\n' ' ')"
 echo "" > /var/archsetup_install.log
 while read -r item; do
     item_name=$(basename "$item" | sed -e 's/^[0-9]*-//g')

@@ -77,18 +77,30 @@ function extract(){
 }
 
 function install_base(){
-    if [[ ! -e "/mnt/root/finished.txt" ]]; then
-        setting_mirror
-        echo "install base packages"
-        timedatectl &&
-        pacstrap -K /mnt base linux &&
-        genfstab -U /mnt > /mnt/etc/fstab &&
-        echo "install at $(date)" > /mnt/root/finished.txt
+    if [[ -e "/mnt/root/finished.txt" ]]; then
+        echo "/mnt/root/finished.txt found"
+        echo "skip running pacstrap"
+        return
     fi
+    setting_mirror
+    echo "install base packages"
+    
+    timedatectl &&
+    pacstrap -K /mnt base linux &&
+    genfstab -U /mnt > /mnt/etc/fstab &&
+    echo "install at $(date)" > /mnt/root/finished.txt ||
+    exit 1
+}
 
+function install_all(){
     echo "copy config-scripts/ to /mnt/root/"
     cp -r "${SCRIPT_PATH}/config-scripts" /mnt/root ||
-    exit 1
+    exit $?
+    
+    arch-chroot /mnt "/root/config-scripts/config-all.sh"
+    ret=$?
+    rm -rf "/mnt/root/config-scripts"
+    if [[ ret -ne 0 ]]; then exit 1; fi
 }
 
 function main(){
@@ -112,6 +124,9 @@ function main(){
     if [[ "${state}" -ge "1" ]]; then extract; fi
     if [[ "${state}" -ge "2" ]]; then install_base; fi
     if [[ "${state}" -ge "3" ]]; then
-        arch-chroot /mnt "/root/config-scripts/config-all.sh"
+        install_all
+        tput setaf 2
+        echo "Installation Finish!"
+        tput sgr0
     fi
 }

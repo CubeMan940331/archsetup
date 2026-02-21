@@ -3,7 +3,7 @@ for item in config-scripts/*/action.sh; do
     chmod +x "$item"
 done
 chmod +x config-scripts/config-all.sh
-find config-scripts -depth 1 -type d | \
+find config-scripts -mindepth 1 -maxdepth 1 -type d | \
     sed -e 's:^config-scripts/::' -e 's:/$::' | \
     sort > config-scripts/list.txt
 

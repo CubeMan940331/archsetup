@@ -2,4 +2,4 @@
 echo "start to download VSCode archive"
 curl --output-dir /tmp --progress-bar -OJL 'https://code.visualstudio.com/sha/download?build=stable&os=linux-x64'
 tar -zxf /tmp/code-stable*.tar.gz -C /usr/share &&
-ln -s /usr/share/VSCode-linux-x64/code /usr/bin/code
+ln -s /usr/share/VSCode-linux-x64/bin/code /usr/bin/code

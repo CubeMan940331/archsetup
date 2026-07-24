@@ -22,7 +22,7 @@ function setting_mirror(){
     echo "setting mirror"
     # setting mirror
     if [[ ! -e "reflector-result.txt" ]]; then
-        reflector --country "${mirror_locations}" --latest 8 --sort rate -p https --save reflector-result.txt
+        reflector --country "${mirror_locations}" --latest 8 -p https --save reflector-result.txt
     fi
     echo "# manual mirrorlist" > mirrorlist_new.txt
     for item in "${mirror_list[@]}"; do

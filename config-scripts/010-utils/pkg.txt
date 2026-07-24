@@ -38,6 +38,7 @@ fastfetch
 
 # misc
 arch-install-scripts
+reflector
 bc
 cmatrix
 cowsay

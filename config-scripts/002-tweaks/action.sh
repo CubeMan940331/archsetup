@@ -4,9 +4,9 @@ SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${SCRIPT_PATH}"
 NAME=$(basename "${SCRIPT_PATH}" | sed -e 's/^[0-9]*-//g')
 # script =======================
-# copy file
-cp files/sshd.local /etc/fail2ban/jail.d/
+systemctl enable NetworkManager
+systemctl enable paccache.timer
+systemctl enable systemd-timesyncd
 
-# enable service
-systemctl enable sshd
-systemctl enable fail2ban
+mkdir -p /etc/systemd/journald.conf.d/
+cp files/size-limit.conf /etc/systemd/journald.conf.d/

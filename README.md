@@ -2,9 +2,9 @@
 
 ## Procedure
 **manual**
+you need to do this part manually
 - partition the disk
-- format the disk
-- mount the disk
+- format and mount the disk
 - inspect or modify the script
 - run it
 
@@ -23,14 +23,13 @@
     - root passwd
     - add user
     - sudo
+- boot loader
+    - grub
 - system-tweaks
-    - enable multilib
     - enable NetworkManager
     - enable paccache.timer
     - enable systemd-timesyncd
     - limit journal size
-- boot loader
-    - grub
 - ssh (with fail2ban)
 - nvidia driver (TODO)
 - Desktop env (with fcitx5-chewing)

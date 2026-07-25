@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "${SCRIPT_PATH}" || exit 1
+cd "${SCRIPT_PATH}"
 NAME=$(basename "${SCRIPT_PATH}" | sed -e 's/^[0-9]*-//g')
 # script =======================
 source "files/basic.conf"
@@ -14,7 +14,7 @@ hwclock --systohc
 for item in "${locale_list[@]}"; do
     sed -e 's/^#'"${item}"'/'"${item}"'/' \
         < /etc/locale.gen \
-        > /tmp/locale.gen &&
+        > /tmp/locale.gen
     mv /tmp/locale.gen /etc/locale.gen
 done
 locale-gen
@@ -31,7 +31,5 @@ echo "${root_passwd}" | passwd -s root
 useradd -mG wheel "${user_name}"
 echo "${user_passwd}" | passwd -s "${user_name}"
 
-systemctl enable NetworkManager
-
-mkdir -p /etc/sudoers.d/ &&
+mkdir -p /etc/sudoers.d/
 cp files/sudo-settings /etc/sudoers.d/

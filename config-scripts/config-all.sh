@@ -3,6 +3,7 @@ set -eo pipefail
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${SCRIPT_PATH}" || exit 1
 function print_info(){
+    local item
     tput setaf 4
     for item in "$@"; do echo "${item}"; done
     tput sgr0

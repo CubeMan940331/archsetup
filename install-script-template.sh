@@ -19,22 +19,26 @@ set -eo pipefail
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${SCRIPT_PATH}"
 function print_info(){
+    local item
     tput setaf 4
     for item in "$@"; do echo "${item}"; done
     tput sgr0
 }
 function print_fail(){
+    local item
     tput setaf 1
     for item in "$@"; do echo "${item}"; done
     tput sgr0
 }
 function print_success(){
+    local item
     tput setaf 2
     for item in "$@"; do echo "${item}"; done
     tput sgr0
 }
 
 function setting_mirror(){
+    local item
     print_info "setting mirror"
     # setting mirror
     if [[ ! -e "reflector-result.txt" ]]; then
@@ -74,6 +78,8 @@ function edit_basic_conf(){
     sed -i "s/^default_locale=[ ]*\$/default_locale=${default_locale}/" \
         config-scripts/000-basic/files/basic.conf
 
+    local target
+    local locale_list_str
     locale_list_str="("
     for target in "${locale_list[@]}"; do
         locale_list_str="${locale_list_str}'${target}' "
@@ -116,6 +122,7 @@ function install_all(){
 }
 
 function main(){
+    local state
     state="$1"
     if [[ -z "${state}" ]]; then
         # default operation: install

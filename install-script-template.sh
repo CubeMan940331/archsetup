@@ -1,5 +1,5 @@
 #!/bin/bash
-host_name="CubicSilicon"
+host_name="archPC"
 user_name="user"
 
 user_passwd="user"
@@ -15,11 +15,27 @@ mirror_list=(
     'https://archlinux.cs.nycu.edu.tw/$repo/os/$arch'
 )
 
+set -eo pipefail
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "${SCRIPT_PATH}" || exit 1
+cd "${SCRIPT_PATH}"
+function print_info(){
+    tput setaf 4
+    for item in "$@"; do echo "${item}"; done
+    tput sgr0
+}
+function print_fail(){
+    tput setaf 1
+    for item in "$@"; do echo "${item}"; done
+    tput sgr0
+}
+function print_success(){
+    tput setaf 2
+    for item in "$@"; do echo "${item}"; done
+    tput sgr0
+}
 
 function setting_mirror(){
-    echo "setting mirror"
+    print_info "setting mirror"
     # setting mirror
     if [[ ! -e "reflector-result.txt" ]]; then
         reflector --country "${mirror_locations}" --latest 8 -p https --save reflector-result.txt
@@ -69,10 +85,8 @@ function edit_basic_conf(){
 }
 
 function extract(){
-    echo "extract scripts"
-    (echo "${archive}" | base64 -d | tar -xz --skip-old-files) || \
-    (echo "failed to extract scripts"; exit 1)
-    
+    print_info "extract scripts"
+    echo "${archive}" | base64 -d | tar -xz --skip-old-files
     edit_basic_conf
 }
 
@@ -83,19 +97,17 @@ function install_base(){
         return
     fi
     setting_mirror
-    echo "install base packages"
+    print_info "install base packages"
     
-    timedatectl &&
-    pacstrap -K /mnt base linux &&
-    genfstab -U /mnt > /mnt/etc/fstab &&
-    echo "install at $(date)" > /mnt/root/finished.txt ||
-    exit 1
+    timedatectl
+    pacstrap -K /mnt base linux
+    genfstab -U /mnt > /mnt/etc/fstab
+    echo "install at $(date)" > /mnt/root/finished.txt
 }
 
 function install_all(){
-    echo "copy config-scripts/ to /mnt/root/"
-    cp -r "${SCRIPT_PATH}/config-scripts" /mnt/root ||
-    exit $?
+    print_info "copy config-scripts/ to /mnt/root/"
+    cp -r "${SCRIPT_PATH}/config-scripts" /mnt/root
     
     arch-chroot /mnt "/root/config-scripts/config-all.sh"
     ret=$?
@@ -115,7 +127,7 @@ function main(){
         base    | 2) state="2" ;;
         install | 3) state="3" ;;
         *)
-            echo "invalid operation"
+            print_fail "invalid operation"
             echo "valid operations: extract, base, install"
             exit 1
         ;;
@@ -125,8 +137,6 @@ function main(){
     if [[ "${state}" -ge "2" ]]; then install_base; fi
     if [[ "${state}" -ge "3" ]]; then
         install_all
-        tput setaf 2
-        echo "Installation Finish!"
-        tput sgr0
+        print_success "Installation Finish!"
     fi
 }
